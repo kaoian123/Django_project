@@ -35,22 +35,5 @@ class Profile(models.Model):
         default="avatars/default.png",
     )
 
-    def update_profile(
-            self,
-            full_name=None,
-            age=None,
-            education=None,
-            avatar=None):
-        """更新用戶資料的方法。"""
-        if full_name is not None:
-            self.full_name = full_name
-        if age is not None:
-            self.age = age
-        if education is not None:
-            self.education = education
-        if avatar is not None:
-            self.avatar = avatar
-        self.save()
-
     def __str__(self):
         return self.user.username or self.full_name

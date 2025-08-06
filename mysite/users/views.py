@@ -3,7 +3,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 
 from .models import Profile
-from .forms import LoginForm
+from .forms import LoginForm, ProfileForm
 
 
 @login_required(login_url="users:login")
@@ -36,25 +36,21 @@ def profile(request):
     """用於顯示和更新用戶個人資料的視圖函數。"""
     """如果用戶沒有 Profile，則創建一個新的 Profile。"""
     user = request.user
-    if hasattr(user, "profile"):
-        profile = user.profile
-    else:
+
+    if not hasattr(user, "profile"):
         profile = Profile.objects.create(user=user)
+    else:
+        profile = user.profile
 
     if request.method == "POST":
-        full_name = request.POST.get("full_name")
-        age = request.POST.get("age")
-        education = request.POST.get("education")
-        avatar = request.FILES.get("avatar")
-
-        profile.update_profile(
-            full_name=full_name, age=age, education=education, avatar=avatar
-        )
-
-        return redirect("users:profile")
+        form = ProfileForm(request.POST, request.FILES, instance=profile)
+        if form.is_valid():
+            form.save()
+            return redirect("users:profile")
+    else:
+        form = ProfileForm(instance=profile)
 
     content = {
-        "profile": profile,
-        "education_choices": Profile.EDUCATION_CHOICES,
+        "form": form,
     }
     return render(request, "users/profile.html", content)
