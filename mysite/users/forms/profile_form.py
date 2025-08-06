@@ -7,17 +7,23 @@ import re
 
 
 class ProfileForm(forms.models.ModelForm):
+    email = forms.EmailField(
+        disabled=True,
+        required=False,
+    )
 
     class Meta:
         model = Profile
         fields = [
             "full_name",
+            "email",
             "age",
             "education",
             "avatar",
         ]
         labels = {
             "full_name": "姓名",
+            "email": "電子郵件",
             "age": "年齡",
             "education": "教育程度",
             "avatar": "頭像",
@@ -45,6 +51,11 @@ class ProfileForm(forms.models.ModelForm):
             "education": {"required": "請選擇教育程度"},
             "avatar": {"invalid": "請上傳有效的圖片格式"},
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.user:
+            self.fields["email"].initial = self.instance.user.email
 
     def clean_full_name(self):
         full_name = self.cleaned_data.get("full_name")
