@@ -2,10 +2,12 @@
 
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.text import slugify
+
+from users.utils import generate_unique_slug
 
 
 class Profile(models.Model):
-    """用戶資料模型，擴展 Django 的 User 模型。"""
 
     EDUCATION_CHOICES = [
         ("None", "無"),
@@ -34,6 +36,21 @@ class Profile(models.Model):
         upload_to="avatars/",
         default="avatars/default.png",
     )
+    slug = models.SlugField(
+        max_length=50,
+        unique=True,
+        null=True,
+    )
+    is_public = models.BooleanField(
+        default=True,
+        help_text="是否公開個人資料",
+    )
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            base_slug = slugify(self.full_name or self.user.username)
+            self.slug = generate_unique_slug(base_slug)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.user.username or self.full_name

@@ -1,9 +1,19 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-
+from django.http import Http404
 from .models import Profile
 from .forms import LoginForm, ProfileForm
+
+
+def mask_name(name: str) -> str:
+
+    length = len(name)
+    if length == 1:
+        return "Ｏ"
+    if length == 2:
+        return name[0] + "Ｏ"
+    return name[0] + "Ｏ" * (length - 2) + name[-1]
 
 
 @login_required(login_url="users:login")
@@ -31,17 +41,55 @@ def logout(request):
     return redirect("users:login")
 
 
+def profile(request, slug=None):
+    """
+    顯示用戶個人資料的視圖函數。
+
+    如果 Profile 不存在，則創建一個新的 Profile。
+
+    顯示 Profile 的基本資料，並顯示 Profile 的 slug。
+    """
+    if slug is None:
+        profile = Profile.objects.get_or_create(user=request.user)[0]
+
+        return redirect("users:profile", slug=profile.slug)
+
+    profile = get_object_or_404(Profile, slug=slug)
+
+    if not profile.is_public and request.user != profile.user:
+        raise Http404
+
+    is_owner = (request.user == profile.user)
+    raw_name = profile.full_name or profile.user.username
+    display_name = raw_name if is_owner else mask_name(raw_name)
+    full_url = request.build_absolute_uri(request.path)
+
+    content = {
+        "profile": profile,
+        "is_owner": is_owner,
+        "display_name": display_name,
+        "full_url": full_url,
+    }
+
+    return render(request, "users/profile_detail.html", content)
+
+
 @login_required(login_url="users:login")
-def profile(request):
-    """用於顯示和更新用戶個人資料的視圖函數。"""
-    """如果用戶沒有 Profile，則創建一個新的 Profile。"""
-    user = request.user
+def profile_edit(request):
+    """
+    用於編輯用戶個人資料的視圖函數。
 
-    if not hasattr(user, "profile"):
-        profile = Profile.objects.create(user=user)
+    如果請求方法為 POST，則驗證並保存表單數據。
+    如果表單有效，重定向到用戶個人資料頁面。
+    否則，顯示編輯表單。
+
+    返回包含 ProfileForm 的上下文以渲染 'profile_edit.html' 模板。
+    """
+
+    if not hasattr(request.user, "profile"):
+        raise Http404
     else:
-        profile = user.profile
-
+        profile = request.user.profile
     if request.method == "POST":
         form = ProfileForm(request.POST, request.FILES, instance=profile)
         if form.is_valid():
@@ -53,4 +101,4 @@ def profile(request):
     content = {
         "form": form,
     }
-    return render(request, "users/profile.html", content)
+    return render(request, "users/profile_edit.html", content)
