@@ -28,6 +28,7 @@ def login(request):
     if request.method == "POST":
         if form.is_valid():
             form.login(request)
+            Profile.objects.get_or_create(user=request.user)[0]
             return redirect("users:index")
     context = {
         "form": form,
@@ -49,10 +50,6 @@ def profile(request, slug=None):
 
     顯示 Profile 的基本資料，並顯示 Profile 的 slug。
     """
-    if slug is None:
-        profile = Profile.objects.get_or_create(user=request.user)[0]
-
-        return redirect("users:profile", slug=profile.slug)
 
     profile = get_object_or_404(Profile, slug=slug)
 
