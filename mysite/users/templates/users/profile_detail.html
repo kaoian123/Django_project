@@ -1,4 +1,5 @@
 {% extends "users/base.html" %}
+{% load user_extras %}
 {% block title %}
     個人資料
 {% endblock title %}
@@ -17,7 +18,13 @@
                                      alt="頭像">
                             </div>
                             <div class="flex-grow-1 text-center text-md-start">
-                                <h2 class="mb-1">{{ display_name }}</h2>
+                                <h2 class="mb-1">
+                                    {% if is_owner %}
+                                        {{ profile.full_name|default:profile.user.username }}
+                                    {% else %}
+                                        {{ profile.full_name|default:profile.user.username|mask_name }}
+                                    {% endif %}
+                                </h2>
                                 <p class="text-muted mb-0">{{ profile.get_education_display }}</p>
                             </div>
                         </div>

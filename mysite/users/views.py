@@ -6,16 +6,6 @@ from .models import Profile
 from .forms import LoginForm, ProfileForm
 
 
-def mask_name(name: str) -> str:
-
-    length = len(name)
-    if length == 1:
-        return "Ｏ"
-    if length == 2:
-        return name[0] + "Ｏ"
-    return name[0] + "Ｏ" * (length - 2) + name[-1]
-
-
 @login_required(login_url="users:login")
 def index(request):
     """用於顯示 user 首頁的視圖函數。"""
@@ -57,14 +47,11 @@ def profile(request, slug=None):
         raise Http404
 
     is_owner = (request.user == profile.user)
-    raw_name = profile.full_name or profile.user.username
-    display_name = raw_name if is_owner else mask_name(raw_name)
     full_url = request.build_absolute_uri(request.path)
 
     content = {
         "profile": profile,
         "is_owner": is_owner,
-        "display_name": display_name,
         "full_url": full_url,
     }
 
