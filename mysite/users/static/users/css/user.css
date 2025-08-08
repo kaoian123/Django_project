@@ -1,0 +1,7 @@
+.screen-70vh {
+    min-height: 70vh;
+}
+
+label.requiredField>span {
+    display: none;
+}
