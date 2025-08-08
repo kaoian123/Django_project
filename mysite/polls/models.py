@@ -1,10 +1,13 @@
 """polls 應用程式的資料模型。"""
+
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils import timezone
 
 
 class Question(models.Model):
     """代表投票問題的模型。"""
+
     question_text = models.CharField(max_length=200)
     pub_date = models.DateTimeField("date published")
 
@@ -18,9 +21,24 @@ class Question(models.Model):
 
 class Choice(models.Model):
     """代表投票選項的模型。"""
+
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
     choice_text = models.CharField(max_length=200)
     votes = models.IntegerField(default=0)
 
     def __str__(self):
         return str(self.choice_text)
+
+
+class Ｖote(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    choice = models.ForeignKey(Choice, on_delete=models.CASCADE)
+    vote_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["user", "question"], name="unique_user_question"
+            )
+        ]
