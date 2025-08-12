@@ -25,3 +25,14 @@ def generate_unique_slug(base_slug, instance_pk=None, model_cls=None):
         if not qs.exists():
             return slug
     raise ValidationError("無法生成唯一的網址，請再試一次或使用不同網址")
+
+
+def mask_name(name: str) -> str:
+    length = len(name)
+    if length == 1:
+        result = "Ｏ"
+    elif length == 2:
+        result = name[0] + "Ｏ"
+    else:
+        result = name[0] + "Ｏ" * (length - 2) + name[-1]
+    return result
