@@ -7,6 +7,7 @@ urlpatterns = [
     path("login/", views.login, name="login"),
     path("logout/", views.logout, name="logout"),
     path("profile/edit", views.profile_edit, name="profile_edit"),
+    path("profile/public", views.profiles_public, name="profile_public"),
     path("profile/<slug:slug>", views.profile, name="profile"),
     path("api/", include("users.api.urls")),
 ]

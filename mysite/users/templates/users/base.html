@@ -13,6 +13,8 @@
         <link rel="stylesheet"
               href="{% static 'bootstrap/css/bootstrap.min.css' %}">
         <link rel="stylesheet" href="{% static 'users/css/user.css' %}">
+        {% block extra_css %}
+        {% endblock extra_css %}
     </head>
     <body class="d-flex flex-column min-vh-100">
         {% block header %}
@@ -23,6 +25,9 @@
             {% endblock content %}
         </div>
         <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+        <script src="{% static "axios/axios.min.js" %}"></script>
         <script src="{% static 'users/js/user.js' %}"></script>
+        {% block extra_js %}
+        {% endblock extra_js %}
     </body>
 </html>

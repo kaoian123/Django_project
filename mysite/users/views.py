@@ -58,6 +58,10 @@ def profile(request, slug=None):
     return render(request, "users/profile_detail.html", content)
 
 
+def profiles_public(request):
+    return render(request, "users/profile_public.html", {})
+
+
 @login_required(login_url="users:login")
 def profile_edit(request):
     """
