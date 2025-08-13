@@ -1,20 +1,19 @@
 #profileList {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
-
 .profile-card {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .profile-avatar {
-    object-fit: cover;
-    height: 200px;
+  object-fit: cover;
+  height: 200px;
 }
 
 #loading {
-    text-align: center;
-    margin-top: 2rem;
+  text-align: center;
+  margin-top: 2rem;
 }

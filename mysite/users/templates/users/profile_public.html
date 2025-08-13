@@ -1,32 +1,27 @@
 {% extends "users/base.html" %}
 {% load static %}
-
 {% block title %}
     公開履歷列表
 {% endblock title %}
-
 {% block extra_css %}
     <link rel="stylesheet" href="{% static "users/css/profile.css" %}">
 {% endblock extra_css %}
-
 {% block content %}
-<div class=" container py-5">
-    <div class="d-flex flex-column align-items-center mb-4">
-        <h1 class="mb-4">公開履歷列表</h1>
-        <button id="refreshBtn" class="btn btn-primary">更新列表</button>
-    </div>
-
-    <div id="loading" >
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
+    <div class=" container py-5">
+        <div class="d-flex flex-column align-items-center mb-4">
+            <h1 class="mb-4">公開履歷列表</h1>
+            <button id="refreshBtn" class="btn btn-primary">更新列表</button>
         </div>
-        <p>資料載入中...</p>
+        <div id="loading">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>資料載入中...</p>
+        </div>
+        <div id="profileList"
+             class="d-flex flex-wrap gap-3 flex-sm-row flex-column align-items-center"></div>
     </div>
-
-    <div id="profileList" class="d-flex flex-wrap gap-3 flex-sm-row flex-column align-items-center"></div>
-</div>
 {% endblock content %}
-
 {% block extra_js %}
     <script src="{% static "users/js/profiles.js" %}"></script>
 {% endblock extra_js %}
