@@ -7,7 +7,7 @@ from rest_framework.decorators import api_view
 @api_view(["GET"])
 def public_profile_list(request):
     profiles = Profile.objects.filter(is_public=True)
-    serializer = ProfilePublicSerializer(profiles, many=True)
+    profiles_serializer = ProfilePublicSerializer(profiles, many=True)
     import time
     time.sleep(3)
-    return Response(serializer.data)
+    return Response(profiles_serializer.data)
