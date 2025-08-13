@@ -11,11 +11,12 @@ function copyToClipboard() {
  * @returns {Promise<Object>} API 回傳的 JSON 資料
  */
 async function fetchData(url) {
+    const base_url = window.location.origin;
     try {
-        const response = await axios.get(url);
+        const response = await axios.get(base_url +url);
         return response.data;
     } catch (error) {
-        console.error("資料抓取失敗:", error);
+        console.error("請求失敗:", error);
         throw error;
     }
 }
