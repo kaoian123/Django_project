@@ -9,16 +9,18 @@ document.addEventListener("DOMContentLoaded", () => {
     function hideLoading() {
         loadingDiv.classList.add("d-none");
     }
+
     function renderProfiles(profiles) {
         try {
+            profileListDiv.innerHTML = "";
             if (!profiles || !Array.isArray(profiles)) {
                 throw new Error("資料格式錯誤");
             }
-            
+
             if (profiles.length === 0) {
                 throw new Error("無公開履歷資料");
             }
-    
+
             profileListDiv.innerHTML = profiles.map(profile => `
                 <div class="card profile-card" style="width: 14rem;">
                     <a href="${profile.slug}" class="text-decoration-none text-dark">
@@ -37,6 +39,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     async function main() {
+        showLoading();
         const API_URL = "/api/public-profiles/";
         fetchData(API_URL).then(profiles => {
             renderProfiles(profiles);
@@ -48,4 +51,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     main();
+    
+    document.getElementById("refreshBtn").addEventListener("click", () => {
+        main();
+    });
 });
