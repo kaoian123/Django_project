@@ -8,4 +8,6 @@ from rest_framework.decorators import api_view
 def public_profile_list(request):
     profiles = Profile.objects.filter(is_public=True)
     serializer = ProfilePublicSerializer(profiles, many=True)
+    import time
+    time.sleep(3)
     return Response(serializer.data)
