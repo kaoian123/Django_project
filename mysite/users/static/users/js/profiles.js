@@ -104,8 +104,9 @@ document.addEventListener('DOMContentLoaded', () => {
         profileListDiv.innerHTML = `<p class="text-danger">無法載入公開履歷資料</p>`
       })
 
-    await Promise.allSettled([profile, profiles_django])
-    hideLoading()
+    Promise.allSettled([profile, profiles_django]).then(() => {
+      hideLoading()
+    })
   }
 
   main()

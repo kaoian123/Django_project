@@ -1,7 +1,10 @@
+import tempfile
+from django.http import Http404, FileResponse
+from weasyprint import HTML
+from django.template.loader import render_to_string
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from django.http import Http404
 from .models import Profile
 from .forms import LoginForm, ProfileForm
 
@@ -46,7 +49,7 @@ def profile(request, slug=None):
     if not profile.is_public and request.user != profile.user:
         raise Http404
 
-    is_owner = (request.user == profile.user)
+    is_owner = request.user == profile.user
     full_url = request.build_absolute_uri(request.path)
 
     content = {
@@ -90,3 +93,31 @@ def profile_edit(request):
         "form": form,
     }
     return render(request, "users/profile_edit.html", content)
+
+
+@login_required(login_url="users:login")
+def profile_export_pdf(request, slug=None):
+    profile = get_object_or_404(Profile, slug=slug)
+    full_url = request.build_absolute_uri(request.path)
+    avar_url = request.build_absolute_uri(profile.avatar.url)
+
+    PDF_content = render_to_string(
+        "pdf/profile_pdf.html",
+        {
+            "profile": profile,
+            "avatar_url": avar_url,
+            "full_url": full_url,
+        },
+    )
+
+    PDF_file = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
+    HTML(string=PDF_content, base_url=request.build_absolute_uri("/")).write_pdf(
+        PDF_file
+    )
+    PDF_file.seek(0)
+    filename = f"{profile.user.username}.pdf"
+
+    response = FileResponse(PDF_file)
+    response["Content-Type"] = "application/pdf"
+    response["Content-Disposition"] = f"inline; filename={filename}"
+    return response

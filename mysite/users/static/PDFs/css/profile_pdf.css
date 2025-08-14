@@ -1,0 +1,51 @@
+body {
+  font-family: 'Noto Sans TC', sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.d-flex {
+  display: flex;
+}
+.flex-column {
+  flex-direction: column;
+}
+.flex-md-row {
+  flex-direction: row;
+}
+.align-items-center {
+  align-items: center;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid;
+  margin: 1rem 0;
+}
+
+.card {
+    border-radius: 12px;
+    border: 1px solid #ddd;
+    padding: 20px;
+    background-color: white;
+    page-break-inside: avoid;
+}
+
+.avatar-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #ccc;
+}
+
+.label-col {
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}

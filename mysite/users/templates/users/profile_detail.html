@@ -59,6 +59,8 @@
                             </div>
                             <div class="text-center mt-4">
                                 <a href="{% url 'users:profile_edit' %}" class="btn btn-primary px-4">編輯資料</a>
+                                <a href="{% url 'users:profile_export_pdf' profile.slug %}"
+                                   class="btn btn-outline-secondary px-4">匯出 PDF</a>
                             </div>
                         {% endif %}
                     </div>
