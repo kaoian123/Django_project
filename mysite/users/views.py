@@ -1,5 +1,6 @@
 import tempfile
 from django.http import Http404, FileResponse
+from pathlib import Path
 from weasyprint import HTML
 from django.template.loader import render_to_string
 from django.shortcuts import render, redirect, get_object_or_404
@@ -7,6 +8,7 @@ from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
 from .models import Profile
 from .forms import LoginForm, ProfileForm
+from django.conf import settings
 
 
 @login_required(login_url="users:login")
@@ -120,4 +122,18 @@ def profile_export_pdf(request, slug=None):
     response = FileResponse(PDF_file)
     response["Content-Type"] = "application/pdf"
     response["Content-Disposition"] = f"inline; filename={filename}"
+    return response
+
+
+@login_required(login_url="users:login")
+def view_profile_pdf(request, filename):
+    pdf_path = Path(settings.BASE_DIR) / "pdf" / filename
+
+    if not pdf_path.exists():
+        raise Http404
+
+    response = FileResponse(open(pdf_path, "rb"))
+    response["Content-Type"] = "application/pdf"
+    response["Content-Disposition"] = f"inline; filename={filename}"
+
     return response

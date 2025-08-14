@@ -8,6 +8,11 @@ urlpatterns = [
     path("logout/", views.logout, name="logout"),
     path("profile/edit", views.profile_edit, name="profile_edit"),
     path("profile/public", views.profiles_public, name="profile_public"),
+    path(
+        "profile/view_pdf/<str:filename>",
+        views.view_profile_pdf,
+        name="profile_view_pdf",
+    ),
     path("profile/<slug:slug>", views.profile, name="profile"),
     path(
         "profile/<slug:slug>/export/pdf",
