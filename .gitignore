@@ -25,3 +25,4 @@ staticfiles/
 
 # Others
 *.sqlite3
+.env_alias.sh
