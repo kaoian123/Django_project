@@ -7,7 +7,7 @@ from django.template.loader import render_to_string
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import logout as auth_logout
 from django.contrib.auth.decorators import login_required
-from .models import Profile
+from .models import Profile, PdfMapping
 from .forms import LoginForm, ProfileForm
 from django.conf import settings
 from urllib.parse import quote
@@ -128,14 +128,19 @@ def profile_export_pdf(request, slug=None):
 
 
 @login_required(login_url="users:login")
-def view_profile_pdf(request, filename):
-    pdf_path = Path(settings.BASE_DIR) / "pdf" / filename
+def view_profile_pdf(request, file_uuid):
+    try:
+        mapping = PdfMapping.objects.get(file_uuid=file_uuid)
+    except PdfMapping.DoesNotExist:
+        raise Http404
+
+    pdf_path = Path(settings.BASE_DIR) / "pdf" / mapping.filename
 
     if not pdf_path.exists():
         raise Http404
 
     response = FileResponse(open(pdf_path, "rb"))
     response["Content-Type"] = "application/pdf"
-    response["Content-Disposition"] = f"inline; filename={filename}"
+    response["Content-Disposition"] = f"inline; filename={mapping.filename}"
 
     return response

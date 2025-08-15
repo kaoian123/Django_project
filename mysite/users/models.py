@@ -1,5 +1,6 @@
 """users 應用程式的資料模型。"""
 
+import uuid
 from django.db import models
 from django.contrib.auth.models import User
 from django.utils.text import slugify
@@ -54,3 +55,11 @@ class Profile(models.Model):
 
     def __str__(self):
         return self.user.username or self.full_name
+
+
+class PdfMapping(models.Model):
+    file_uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    filename = models.CharField(max_length=100)
+
+    def __str__(self):
+        return str(self.file_uuid)

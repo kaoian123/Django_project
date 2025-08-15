@@ -9,7 +9,7 @@ urlpatterns = [
     path("profile/edit", views.profile_edit, name="profile_edit"),
     path("profile/public", views.profiles_public, name="profile_public"),
     path(
-        "profile/view_pdf/<str:filename>",
+        "profile/view_pdf/<uuid:file_uuid>",
         views.view_profile_pdf,
         name="profile_view_pdf",
     ),
