@@ -1,6 +1,7 @@
 import tempfile
 from django.http import Http404, FileResponse
 from pathlib import Path
+from django.urls import reverse
 from weasyprint import HTML
 from django.template.loader import render_to_string
 from django.shortcuts import render, redirect, get_object_or_404
@@ -9,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from .models import Profile
 from .forms import LoginForm, ProfileForm
 from django.conf import settings
+from urllib.parse import quote
 
 
 @login_required(login_url="users:login")
@@ -100,10 +102,10 @@ def profile_edit(request):
 @login_required(login_url="users:login")
 def profile_export_pdf(request, slug=None):
     profile = get_object_or_404(Profile, slug=slug)
-    full_url = request.build_absolute_uri(request.path)
+    full_url = request.build_absolute_uri(reverse("users:profile", args=[slug]))
     avar_url = request.build_absolute_uri(profile.avatar.url)
 
-    PDF_content = render_to_string(
+    html_content = render_to_string(
         "pdf/profile_pdf.html",
         {
             "profile": profile,
@@ -113,15 +115,15 @@ def profile_export_pdf(request, slug=None):
     )
 
     PDF_file = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
-    HTML(string=PDF_content, base_url=request.build_absolute_uri("/")).write_pdf(
+    HTML(string=html_content, base_url=request.build_absolute_uri("/")).write_pdf(
         PDF_file
     )
     PDF_file.seek(0)
-    filename = f"{profile.user.username}.pdf"
+    filename = f"{profile.full_name}.pdf"
 
     response = FileResponse(PDF_file)
     response["Content-Type"] = "application/pdf"
-    response["Content-Disposition"] = f"inline; filename={filename}"
+    response["Content-Disposition"] = f"attachment; filename*=utf-8''{quote(filename)}"
     return response
 
 
